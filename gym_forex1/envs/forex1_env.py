@@ -22,14 +22,16 @@ class Forex1(gym.Env):
         self.CurrentMarketLevel = 0
         self.active_trade = 0
         self.profit = 0
+        
+        self.account_balance = INITIAL_ACCOUNT_BALANCE
 
-        # Actions of the format Buy, Sell, Hold, Close
+        # Actions of the format hold, Buy, Sell, close
         self.action_space = spaces.Discrete(3)
 
         # Prices contains the OHCL values for the last five prices
         self.observation_space = spaces.Box(low=0, high=1, shape=(5, ), dtype=np.float16)
 
-    def Get_current_step_data(self):
+    def _get_current_step_data(self):
         # Get the stock data points for the last 5 days and scale to between 0-1
         data_current_step = np.array([
             self.df.loc[self.current_step:self.current_step, 'Cycle_12_14_H4_1'].values,
@@ -77,11 +79,11 @@ class Forex1(gym.Env):
                     self.profit
                 ]])
 
-        obs = self.Normalize_data(output_data)
+        obs = self._normalize_data(output_data)
 
         return obs
 
-    def Normalize_data(self, input_data):
+    def _normalize_data(self, input_data):
 
         norm_data = input_data
         norm_data[0] = norm_data[0] /100                    # Cycle_12_14_H4_1
@@ -126,87 +128,84 @@ class Forex1(gym.Env):
         norm_data[39] = norm_data[39] /1000                    # profit
 
         return norm_data
+	
+	def _close_trade(self):
+		if self.active_trade == 2:
+			self.profit == (self.trade_open_price - self.CurrentMarketLevel ) * 10000
+		if self.active_trade == 1:
+			self.profit == (self.CurrentMarketLevel - self.trade_open_price) * 10000
+        self.close_profit = self.profit
+        self.account_balance = self.account_balance + self.profit
+        self.profit = 0
+        self.active_trade = 0
+        self.trade_open_price = 0
+        
+    def _take_action(self, action):      
+		action_type = action
 
-    def _take_action(self, action):
-        # Set the current price to a random price within the time step
-        current_price = random.uniform(self.df.loc[self.current_step, "Open"], self.df.loc[self.current_step, "Close"])
+		if action_type == 1 and self.active_trade != 1: # Buy trade action
+			if self.active_trade ==2:
+				_close_trade()
+			self.active_trade == 1
+			self.trade_open_price = self.CurrentMarketLevel
 
-        action_type = action
-        amount = 0.8
+		elif action_type == 2 and self.active_trade == 0: # Sell trade action
+			if self.active_trade == 1:
+				_close_trade()
+			self.active_trade  == 2
+			self.trade_open_price == self.CurrentMarketLevel 
 
-        if action_type == 1:
-            # Buy trade action
-            total_possible = int(self.balance / current_price)
-            shares_bought = int(total_possible * amount)
-            prev_cost = self.cost_basis * self.shares_held
-            additional_cost = shares_bought * current_price
-
-            self.balance -= additional_cost
-            self.cost_basis = (
-                prev_cost + additional_cost) / (self.shares_held + shares_bought)
-            self.shares_held += shares_bought
-
-        elif action_type == 2:
-            # Sell trade action
-            shares_sold = int(self.shares_held * amount)
-            self.balance += shares_sold * current_price
-            self.shares_held -= shares_sold
-            self.total_shares_sold += shares_sold
-            self.total_sales_value += shares_sold * current_price
-
-        elif action_type == 3:
-            # Sell trade action
-            shares_sold = int(self.shares_held * amount)
-            self.balance += shares_sold * current_price
-            self.shares_held -= shares_sold
-            self.total_shares_sold += shares_sold
-            self.total_sales_value += shares_sold * current_price
-
-        self.net_worth = self.balance + self.shares_held * current_price
-
-        if self.net_worth > self.max_net_worth:
-            self.max_net_worth = self.net_worth
-
-        if self.shares_held == 0:
-            self.cost_basis = 0
-
+		elif action_type == 3 and self.active_trade != 0: # Close trade action
+			_close_trade()
+		
+		elif action_type == 0:					# Hold trade action
+			self.account_balance = self.account_balance + self.profit
+			
+            
     def step(self, action):
         # Execute one time step within the environment
-        self._take_action(action)
+		self._take_action(action)
 
-        self.current_step += 1
+		self.current_step += 1
 
-        if self.current_step > len(self.df.loc[:, 'Open'].values) - 6:
-            self.current_step = 0
+		if self.current_step > len(self.df.loc[:, 'Cycle_12_14_H4_1'].values):
+			done = true
 
-        delay_modifier = (self.current_step / MAX_STEPS)
+		done = self.account_balance <= 0
 
-        reward = self.balance * delay_modifier
-        done = self.net_worth <= 0
-
-        obs = self._next_observation()
-
-        return obs, reward, done, {}
+		obs = self._get_current_step_data()
+        
+		if self.active_trade != 0:
+			reward += 0.001
+			
+		if self.close_profit > 5:
+			reward += 5
+			self.close_profit = 0
+		elif self.close_profit < 5:
+			reward -= 5
+			self.close_profit = 0
+		
+		if self.active_trade == 0:
+			reward -= 0.005
+		
+		return obs, reward, done, info
 
     def reset(self):
         # Reset the state of the environment to an initial state
-        self.balance = INITIAL_ACCOUNT_BALANCE
+        self.account_balance = INITIAL_ACCOUNT_BALANCE
+        self.profit = 0
+        self.trade_open_price = 0
+        self.active_trade = 0
+        self.close_profit = 0
 
         # Set the current step to a random point within the data frame
         self.current_step = 0
          
-        return self.Get_current_step_data()
+        return self._get_current_step_data()
 
     def render(self, mode='human', close=False):
         # Render the environment to the screen
-        profit = self.net_worth - INITIAL_ACCOUNT_BALANCE
-
-        print(f'Step: {self.current_step}')
-        print(f'Balance: {self.balance}')
-        print(
-            f'Shares held: {self.shares_held} (Total sold: {self.total_shares_sold})')
-        print(
-            f'Avg cost for held shares: {self.cost_basis} (Total sales value: {self.total_sales_value})')
-        print(
-            f'Net worth: {self.net_worth} (Max net worth: {self.max_net_worth})')
-        print(f'Profit: {profit}')
+        
+        print(f'Step: {self.current_step},active trade: {self.active_trade},profit: {self.profit},acc balance: {self.account_balance}')
+        
+    
