@@ -22,6 +22,7 @@ class Forex1(gym.Env):
         self.CurrentMarketLevel = 0
         self.active_trade = 0
         self.profit = 0
+        self.reward = 0
 
         self.account_balance = INITIAL_ACCOUNT_BALANCE
 
@@ -158,7 +159,7 @@ class Forex1(gym.Env):
         elif action_type == 3 and self.active_trade != 0:      # Close trade action
             _close_trade()
 
-        elif action_type == 0:					# Hold trade action
+        elif action_type == 0:                  # Hold trade action
             self.account_balance = self.account_balance + self.profit
 
     def step(self, action):
@@ -175,19 +176,19 @@ class Forex1(gym.Env):
         obs = self._get_current_step_data()
 
         if self.active_trade != 0:
-            reward += 0.001
+            self.reward += 0.001
 
         if self.close_profit > 5:
-            reward += 5
+            self.reward += 5
             self.close_profit = 0
         elif self.close_profit < 5:
-            reward -= 5
+            self.reward -= 5
             self.close_profit = 0
 
         if self.active_trade == 0:
-            reward -= 0.005
+            self.reward -= 0.005
 
-        return obs, reward, done, info
+        return obs, self.reward, done, info
 
     def reset(self):
         # Reset the state of the environment to an initial state
@@ -196,6 +197,7 @@ class Forex1(gym.Env):
         self.trade_open_price = 0
         self.active_trade = 0
         self.close_profit = 0
+        self.reward = 0
 
         # Set the current step to a random point within the data frame
         self.current_step = 0
