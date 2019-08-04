@@ -154,7 +154,7 @@ class Forex1(gym.Env):
             if self.active_trade == 1:
                 self._close_trade()
             self.active_trade = 2
-            self.trade_open_price == self.CurrentMarketLevel
+            self.trade_open_price = self.CurrentMarketLevel
 
         elif action_type == 3 and self.active_trade != 0:      # Close trade action
             self._close_trade()
