@@ -209,5 +209,5 @@ class Forex1(gym.Env):
     def render(self, mode='human', close=False):
 
         print(f'Step: {self.current_step}, active trade: {self.active_trade}, \
-            profit: {self.profit}, acc balance: {self.account_balance}, \
-            trade_open_price: {self.trade_open_price}, market level: {self.CurrentMarketLevel}')
+profit: {self.profit}, acc balance: {self.account_balance}, \
+trade_open_price: {self.trade_open_price}, market level: {self.CurrentMarketLevel}')
