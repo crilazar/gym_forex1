@@ -79,7 +79,7 @@ class Forex1(gym.Env):
                     self.active_trade,
                     self.profit
                 ]])
-        print(f'current step: {self.current_step}')
+
         obs = self._normalize_data(output_data)
 
         return obs
@@ -162,7 +162,7 @@ class Forex1(gym.Env):
         elif action_type == 0:                  # Hold trade action
             self.account_balance = self.account_balance + self.profit
 
-        print(f'action_type = {action} and active_trade = {self.active_trade}')
+        #print(f'action_type = {action} and active_trade = {self.active_trade}')
 
     def step(self, action):
         # Execute one time step within the environment
