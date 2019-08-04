@@ -129,18 +129,18 @@ class Forex1(gym.Env):
 
         return norm_data
 
-def _close_trade(self):
-		if self.active_trade == 2:
-			self.profit == (self.trade_open_price - self.CurrentMarketLevel ) * 10000
-		if self.active_trade == 1:
-			self.profit == (self.CurrentMarketLevel - self.trade_open_price) * 10000
+    def _close_trade(self):
+        if self.active_trade == 2:
+            self.profit == (self.trade_open_price - self.CurrentMarketLevel ) * 10000
+        if self.active_trade == 1:
+            self.profit == (self.CurrentMarketLevel - self.trade_open_price) * 10000
         self.close_profit = self.profit
         self.account_balance = self.account_balance + self.profit
         self.profit = 0
         self.active_trade = 0
         self.trade_open_price = 0
 
-def _take_action(self, action):      
+    def _take_action(self, action):      
 		action_type = action
 
 		if action_type == 1 and self.active_trade != 1: # Buy trade action
@@ -161,7 +161,7 @@ def _take_action(self, action):
 		elif action_type == 0:					# Hold trade action
 			self.account_balance = self.account_balance + self.profit
 
-def step(self, action):
+    def step(self, action):
         # Execute one time step within the environment
 		self._take_action(action)
 
@@ -189,7 +189,7 @@ def step(self, action):
 		
 		return obs, reward, done, info
 
-def reset(self):
+    def reset(self):
         # Reset the state of the environment to an initial state
         self.account_balance = INITIAL_ACCOUNT_BALANCE
         self.profit = 0
@@ -202,7 +202,7 @@ def reset(self):
          
         return self._get_current_step_data()
 
-def render(self, mode='human', close=False):
+    def render(self, mode='human', close=False):
 
         print(f'Step: {self.current_step},active trade: {self.active_trade},profit: {self.profit},acc balance: {self.account_balance}')
         
