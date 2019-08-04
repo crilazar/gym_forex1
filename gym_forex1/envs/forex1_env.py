@@ -143,7 +143,7 @@ class Forex1(gym.Env):
 
     def _take_action(self, action):
         action_type = action
-
+        print(f'action_type = {action}')
         if action_type == 1 and self.active_trade != 1:       # Buy trade action
             if self.active_trade == 2:
                 _close_trade()
