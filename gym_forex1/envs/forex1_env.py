@@ -79,7 +79,7 @@ class Forex1(gym.Env):
                     self.active_trade,
                     self.profit
                 ]])
-
+        print(f'current step: {self.current_step}')
         obs = self._normalize_data(output_data)
 
         return obs
