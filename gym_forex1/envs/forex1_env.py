@@ -132,9 +132,9 @@ class Forex1(gym.Env):
 
     def _close_trade(self):
         if self.active_trade == 2:
-            self.profit == (self.trade_open_price - self.CurrentMarketLevel) * 10000
+            self.profit = (self.trade_open_price - self.CurrentMarketLevel) * 10000
         if self.active_trade == 1:
-            self.profit == (self.CurrentMarketLevel - self.trade_open_price) * 10000
+            self.profit = (self.CurrentMarketLevel - self.trade_open_price) * 10000
         self.close_profit = self.profit
         self.account_balance = self.account_balance + self.profit
         self.profit = 0
@@ -143,18 +143,17 @@ class Forex1(gym.Env):
 
     def _take_action(self, action):
         action_type = action
-        print(f'action_type = {action}')
+
         if action_type == 1 and self.active_trade != 1:       # Buy trade action
-            print('cucu')
             if self.active_trade == 2:
                 _close_trade()
-            self.active_trade == 1
+            self.active_trade = 1
             self.trade_open_price = self.CurrentMarketLevel
 
         elif action_type == 2 and self.active_trade == 0:     # Sell trade action
             if self.active_trade == 1:
                 _close_trade()
-            self.active_trade == 2
+            self.active_trade = 2
             self.trade_open_price == self.CurrentMarketLevel
 
         elif action_type == 3 and self.active_trade != 0:      # Close trade action
