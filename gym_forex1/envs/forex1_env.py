@@ -146,18 +146,18 @@ class Forex1(gym.Env):
 
         if action_type == 1 and self.active_trade != 1:       # Buy trade action
             if self.active_trade == 2:
-                _close_trade()
+                self._close_trade()
             self.active_trade = 1
             self.trade_open_price = self.CurrentMarketLevel
 
         elif action_type == 2 and self.active_trade == 0:     # Sell trade action
             if self.active_trade == 1:
-                _close_trade()
+                self._close_trade()
             self.active_trade = 2
             self.trade_open_price == self.CurrentMarketLevel
 
         elif action_type == 3 and self.active_trade != 0:      # Close trade action
-            _close_trade()
+            self._close_trade()
 
         elif action_type == 0:                  # Hold trade action
             self.account_balance = self.account_balance + self.profit
