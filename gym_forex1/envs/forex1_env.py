@@ -172,8 +172,8 @@ class Forex1(gym.Env):
             done = true
 
         done = self.account_balance <= 0
-
         obs = self._get_current_step_data()
+        info = 0
 
         if self.active_trade != 0:
             self.reward += 0.001
