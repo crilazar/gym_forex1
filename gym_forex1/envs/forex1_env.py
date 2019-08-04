@@ -181,7 +181,7 @@ class Forex1(gym.Env):
         if self.close_profit > 5:
             self.reward += 5
             self.close_profit = 0
-        elif self.close_profit < 5:
+        elif self.close_profit < 0:
             self.reward -= 5
             self.close_profit = 0
 
