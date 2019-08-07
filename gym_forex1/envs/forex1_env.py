@@ -165,7 +165,7 @@ class Forex1(gym.Env):
         elif action_type == 3 and self.active_trade != 0:      # Close trade action
             self._close_trade()
 
-        elif action_type == 0 and self.active_trade != 0:                  # Hold trade action
+        if self.active_trade != 0:                  # if Hold trade action and active trade is buy or sell
             self.account_balance = self.before_trade_acount_balance  + self.profit
             
         #print(f'action_type = {action} and active_trade = {self.active_trade}')
