@@ -27,10 +27,10 @@ class Forex1(gym.Env):
         self.account_balance = INITIAL_ACCOUNT_BALANCE
 
         # Actions of the format hold, Buy, Sell, close
-        self.action_space = spaces.Discrete(3)
+        self.action_space = spaces.Discrete(4)
 
         # Prices contains the OHCL values for the last five prices
-        self.observation_space = spaces.Box(low=0, high=1, shape=(5, ), dtype=np.float16)
+        self.observation_space = spaces.Box(low=0, high=1, shape=(40, ), dtype=np.float32)
 
     def _get_current_step_data(self):
         # Get the stock data points for the last 5 days and scale to between 0-1
