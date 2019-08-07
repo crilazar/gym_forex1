@@ -161,6 +161,12 @@ class Forex1(gym.Env):
 
         elif action_type == 0:                  # Hold trade action
             self.account_balance = self.account_balance + self.profit
+            
+        if active_trade != 0:
+            if self.active_trade == 2:
+                self.profit = (self.trade_open_price - self.CurrentMarketLevel) * 10000
+            if self.active_trade == 1:
+                self.profit = (self.CurrentMarketLevel - self.trade_open_price) * 10000
 
         #print(f'action_type = {action} and active_trade = {self.active_trade}')
 
