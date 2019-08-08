@@ -5,7 +5,7 @@ from gym import spaces
 import pandas as pd
 import numpy as np
 
-INITIAL_ACCOUNT_BALANCE = 10000
+INITIAL_ACCOUNT_BALANCE = 5000
 
 
 class Forex1(gym.Env):
@@ -177,7 +177,7 @@ class Forex1(gym.Env):
         self.current_step += 1
 
         if self.current_step > 212495:                     #len(self.df.loc[:, 'Cycle_12_14_H4_1'].values):
-            done = true
+            done = True
 
         done = self.account_balance <= 0
         obs = self._get_current_step_data()
