@@ -177,7 +177,7 @@ class Forex1(gym.Env):
 
         self.current_step += 1
 
-        if self.current_step > self.max_step - 2:
+        if self.current_step > self.max_step:
             done = True
 
         done = self.account_balance <= 0
