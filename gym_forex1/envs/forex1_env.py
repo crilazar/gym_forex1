@@ -143,37 +143,43 @@ class Forex1(gym.Env):
     def _take_action(self, action):
         action_type = action
         
-        if self.active_trade != 0:               # calculate profit if any active trade
-            if self.active_trade == 2:
-                self.profit = (self.trade_open_price - self.CurrentMarketLevel) * 10000
-            if self.active_trade == 1:
-                self.profit = (self.CurrentMarketLevel - self.trade_open_price) * 10000
-
         if action_type == 1 and self.active_trade != 1:       # Buy trade action
             if self.active_trade == 2:
                 self._close_trade()
             self.active_trade = 1
             self.trade_open_price = self.CurrentMarketLevel
             self.before_trade_acount_balance = self.account_balance
+            self.profit = 0
 
-        elif action_type == 2 and self.active_trade != 2:     # Sell trade action
+        if action_type == 2 and self.active_trade != 2:     # Sell trade action
             if self.active_trade == 1:
                 self._close_trade()
             self.active_trade = 2
             self.trade_open_price = self.CurrentMarketLevel
             self.before_trade_acount_balance = self.account_balance
+            self.profit = 0
 
-        elif action_type == 3 and self.active_trade != 0:      # Close trade action
+        if action_type == 3 and self.active_trade != 0:      # Close trade action
             self._close_trade()
-
-        if self.active_trade != 0:                  # if Hold trade action and active trade is buy or sell
-            self.account_balance = self.before_trade_acount_balance  + self.profit
             
         #print(f'action_type = {action} and active_trade = {self.active_trade}')
-
+        
+    def _calculate_profit(self):
+        
+        if self.active_trade != 0:               # calculate profit only if any active trade
+            if self.active_trade == 2:
+                self.profit = (self.trade_open_price - self.CurrentMarketLevel) * 10000
+            if self.active_trade == 1:
+                self.profit = (self.CurrentMarketLevel - self.trade_open_price) * 10000
+            self.account_balance = self.before_trade_acount_balance  + self.profit
+        
+        if self.profit < -100:              # close active trade if profit less than -100
+            self._close_trade()
+            
     def step(self, action):
         # Execute one time step within the environment
         self._take_action(action)
+        self._calculate_profit()
 
         self.current_step += 1
         
@@ -187,10 +193,10 @@ class Forex1(gym.Env):
             self.reward += 0.001
 
         if self.close_profit > 5:
-            self.reward += 5
+            self.reward = self.close_profit + 5
             self.close_profit = 0
         elif self.close_profit < 0:
-            self.reward -= 5
+            self.reward = self.close_profit - 5
             self.close_profit = 0
 
         if self.active_trade == 0:
