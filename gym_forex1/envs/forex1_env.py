@@ -18,7 +18,7 @@ class Forex1(gym.Env):
         df = pd.read_csv('./data/GBPUSD_Jan_2019_to_Aug_2019.csv')
         df = df.sort_values('Date_time')
         self.df = df
-        self.max_step = len(self.df.loc[:, 'Cycle_12_14_H4_1'].values)
+        self.max_step = len(self.df.loc[:, 'Cycle_12_14_H4_1'].values) - 2
 
         self.CurrentMarketLevel = 0
         self.active_trade = 0
@@ -202,13 +202,11 @@ class Forex1(gym.Env):
     def reset(self):
         # Reset the state of the environment to an initial state
         self.account_balance = INITIAL_ACCOUNT_BALANCE
-        self.current_step = 0
         self.profit = 0
         self.trade_open_price = 0
         self.active_trade = 0
         self.close_profit = 0
         self.reward = 0
-        self.max_step = len(self.df.loc[:, 'Cycle_12_14_H4_1'].values)
 
         # Set the current step to a random point within the data frame
         self.current_step = 0
