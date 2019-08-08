@@ -178,7 +178,7 @@ class Forex1(gym.Env):
         self.current_step += 1
         
         done = self.account_balance <= 0
-        done = self.current_step > self.max_step -1
+        done = self.current_step > 11000                #self.max_step -1
         
         obs = self._get_current_step_data()
         info = 0
