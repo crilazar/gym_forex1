@@ -177,7 +177,7 @@ class Forex1(gym.Env):
 
         self.current_step += 1
 
-        if self.current_step > self.max_step - 1:
+        if self.current_step > self.max_step - 2:
             done = True
 
         done = self.account_balance <= 0
@@ -219,4 +219,5 @@ class Forex1(gym.Env):
 
         print(f'Step: {self.current_step}, active trade: {self.active_trade}, \
 profit: {self.profit}, acc balance: {self.account_balance}, \
-trade_open_price: {self.trade_open_price}, market level: {self.CurrentMarketLevel}')
+trade_open_price: {self.trade_open_price}, market level: {self.CurrentMarketLevel}, \
+max_step: {self.max_step}')
