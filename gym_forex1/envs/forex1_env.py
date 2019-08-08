@@ -176,7 +176,7 @@ class Forex1(gym.Env):
 
         self.current_step += 1
 
-        if self.current_step > len(self.df.loc[:, 'Cycle_12_14_H4_1'].values):
+        if self.current_step > 212495:                     #len(self.df.loc[:, 'Cycle_12_14_H4_1'].values):
             done = true
 
         done = self.account_balance <= 0
