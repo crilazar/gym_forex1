@@ -187,18 +187,17 @@ class Forex1(gym.Env):
         done = self.current_step > self.max_step -1
         
         obs = self._get_current_step_data()
-        info = 0
+        
+        info = self.account_balance
 
         if self.active_trade != 0:
             self.reward += 0.001
-
         if self.close_profit > 5:
             self.reward = self.close_profit + 5
             self.close_profit = 0
-        elif self.close_profit < 0:
+        if self.close_profit < 0:
             self.reward = self.close_profit - 5
             self.close_profit = 0
-
         if self.active_trade == 0:
             self.reward -= 0.005
 
