@@ -23,7 +23,6 @@ class Forex1(gym.Env):
         self.CurrentMarketLevel = 0
         self.active_trade = 0
         self.profit = 0
-        self.reward = 0
 
         self.account_balance = INITIAL_ACCOUNT_BALANCE
         self.before_trade_acount_balance = self.account_balance
@@ -191,17 +190,17 @@ class Forex1(gym.Env):
         info = self.account_balance
 
         if self.active_trade != 0:
-            self.reward += 0.001
+            reward = 0.001
         if self.close_profit > 5:
-            self.reward = self.close_profit + 5
+            reward = self.close_profit + 5
             self.close_profit = 0
         if self.close_profit < 0:
-            self.reward = self.close_profit - 5
+            reward = self.close_profit - 5
             self.close_profit = 0
         if self.active_trade == 0:
-            self.reward -= 0.005
+            reward = -0.005
 
-        return obs, self.reward, done, info
+        return obs, reward, done, info
 
     def reset(self):
         # Reset the state of the environment to an initial state
