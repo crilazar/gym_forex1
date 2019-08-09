@@ -181,8 +181,8 @@ class Forex1(gym.Env):
         self._calculate_profit()
 
         self.current_step += 1
-        
-        done = self.account_balance <= 0
+        reward = 0
+        done = float(self.account_balance) <= 0
         done = self.current_step > self.max_step -1
         
         obs = self._get_current_step_data()
