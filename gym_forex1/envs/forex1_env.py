@@ -78,7 +78,7 @@ class Forex1(gym.Env):
         self.CurrentMarketLevel = data_current_step[30]
         output_data = np.append(data_current_step, [[
                     self.active_trade,
-                    self.profit
+                    float(self.profit)
                 ]])
 
         obs = self._normalize_data(output_data)
@@ -219,6 +219,6 @@ class Forex1(gym.Env):
     def render(self, mode='human', close=False):
 
         print(f'Step: {self.current_step}, active trade: {self.active_trade}, \
-profit: {self.profit}, acc balance: {self.account_balance}, \
+profit: {float(self.profit)}, acc balance: {float(self.account_balance)}, \
 trade_open_price: {self.trade_open_price}, market level: {self.CurrentMarketLevel}, \
 max_step: {self.max_step}')
