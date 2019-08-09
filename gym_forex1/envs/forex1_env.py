@@ -173,7 +173,6 @@ class Forex1(gym.Env):
             self.account_balance = self.before_trade_acount_balance  + self.profit
         
         if float(self.profit) < -100:              # close active trade if profit less than -100
-            print('trade loss > 100')
             self._close_trade()
             
     def step(self, action):
