@@ -127,7 +127,7 @@ class Forex1(gym.Env):
         norm_data[36] = (norm_data[36] + 20) / 40                    # EMA_red_H1_slope
         norm_data[37] = norm_data[37] / 500                    # Market_to_EMA_blue_H1
         norm_data[38] = norm_data[38] / 2                    # active_trade
-        norm_data[39] = norm_data[39] / 1000                    # profit
+        norm_data[39] = (norm_data[39] + 1000) / 2000                    # profit
 
         return norm_data
 
