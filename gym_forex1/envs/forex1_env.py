@@ -23,6 +23,10 @@ class Forex1(gym.Env):
         self.CurrentMarketLevel = 0
         self.active_trade = 0
         self.profit = 0
+        self.profitable_buy = 0
+        self.profitable_sell = 0
+        self.notprofitable_buy = 0
+        self.notprofitable_sell = 0
 
         self.account_balance = INITIAL_ACCOUNT_BALANCE
         self.before_trade_acount_balance = self.account_balance
@@ -134,6 +138,18 @@ class Forex1(gym.Env):
     def _close_trade(self):
         self.close_profit = self.profit
         self.account_balance = self.before_trade_acount_balance + self.profit
+
+        if self.active_trade == 1:
+            if self.close_profit > 0:
+                self.profitable_buy += 1
+            else:
+                self.notprofitable_buy += 1
+        if self.active_trade == 2:
+            if self.close_profit > 0:
+                self.profitable_sell += 1
+            else:
+                self.notprofitable_sell += 1
+
         self.profit = 0
         self.active_trade = 0
         self.trade_open_price = 0
@@ -142,7 +158,7 @@ class Forex1(gym.Env):
     def _take_action(self, action):
         action_type = action
         
-        if action_type == 1 and self.active_trade != 1:       # Buy trade action
+        if action_type == 1 and self.active_trade != 1:       # Buy trade action when active_trade = 1
             if self.active_trade == 2:
                 self._close_trade()
             self.active_trade = 1
@@ -150,7 +166,7 @@ class Forex1(gym.Env):
             self.before_trade_acount_balance = self.account_balance
             self.profit = 0
 
-        if action_type == 2 and self.active_trade != 2:     # Sell trade action
+        if action_type == 2 and self.active_trade != 2:     # Sell trade action when active_trade = 2
             if self.active_trade == 1:
                 self._close_trade()
             self.active_trade = 2
@@ -187,7 +203,7 @@ class Forex1(gym.Env):
         
         obs = self._get_current_step_data()
         
-        info = self.account_balance
+        info = [float(self.account_balance), self.profitable_buy, self.notprofitable_buy, self.profitable_sell, self.notprofitable_sell]
 
         if self.active_trade != 0:
             reward = 0.001
