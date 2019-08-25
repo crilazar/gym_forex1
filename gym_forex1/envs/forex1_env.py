@@ -206,9 +206,9 @@ class Forex1(gym.Env):
         info = [float(self.account_balance), self.profitable_buy, self.notprofitable_buy, self.profitable_sell, self.notprofitable_sell]
 
         if self.active_trade != 0:
-            reward = 0.001
+            reward = 0.02                  # before 0.001
         if self.active_trade == 0 and self.close_profit == 0:
-            reward = -0.005
+            reward = -0.05                  #before -0.005
         if self.close_profit > 5:
             reward = self.close_profit + 5
             self.close_profit = 0
