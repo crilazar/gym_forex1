@@ -209,12 +209,16 @@ class Forex1(gym.Env):
             reward = 0.05                  # before 0.001
         if self.active_trade == 0 and self.close_profit == 0:
             reward = -0.05                  #before -0.005
-        if self.close_profit > 20:
+        if self.close_profit > 50:
+            reward = self.close_profit + 20
+            self.close_profit = 0           
+        elif self.close_profit > 30:
             reward = self.close_profit + 10
             self.close_profit = 0
-        if self.close_profit > 10:
+        elif self.close_profit > 10:
             reward = self.close_profit + 5
-            self.close_profit = 0            
+            self.close_profit = 0
+
         if self.close_profit < 0:
             reward = self.close_profit - 5
             self.close_profit = 0
