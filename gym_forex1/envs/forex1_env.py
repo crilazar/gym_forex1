@@ -27,6 +27,8 @@ class Forex1(gym.Env):
         self.profitable_sell = 0
         self.notprofitable_buy = 0
         self.notprofitable_sell = 0
+        self.trade_length = 0
+        self.last_trade_length = 0
 
         self.account_balance = INITIAL_ACCOUNT_BALANCE
         self.before_trade_acount_balance = self.account_balance
@@ -113,14 +115,21 @@ class Forex1(gym.Env):
         self.active_trade = 0
         self.trade_open_price = 0
         self.before_trade_acount_balance = 0
+        self.last_trade_length = self.trade_length
+        self.trade_length = 0
 
     def _take_action(self, action):
         action_type = action
         
+        if self.active_trade != 0:
+            self.trade_length += 1
+
         if action_type == 1 and self.active_trade != 1:       # Buy trade action when active_trade = 1
             if self.active_trade == 2:
                 self._close_trade()
             self.active_trade = 1
+            self.trade_length = 0
+            self.last_trade_length = 0
             self.trade_open_price = self.CurrentMarketLevel
             self.before_trade_acount_balance = self.account_balance
             self.profit = 0
@@ -129,6 +138,8 @@ class Forex1(gym.Env):
             if self.active_trade == 1:
                 self._close_trade()
             self.active_trade = 2
+            self.trade_length = 0
+            self.last_trade_length = 0
             self.trade_open_price = self.CurrentMarketLevel
             self.before_trade_acount_balance = self.account_balance
             self.profit = 0
@@ -164,18 +175,25 @@ class Forex1(gym.Env):
         
         info = [float(self.account_balance), self.profitable_buy, self.notprofitable_buy, self.profitable_sell, self.notprofitable_sell]
 
-        if self.active_trade != 0:
-            reward = 0.05                  # before 0.001
+        # bonus positiv for having an active trade and for having a profitable trade
+        if self.active_trade != 0 and self.trade_length > 10:
+            reward = self.trade_length / 100
+            if self.profit > 0:
+                reward = reward + self.profit / 10
+
+        # bonus negativ for not having an active trade
         if self.active_trade == 0 and self.close_profit == 0:
-            reward = -0.05                  #before -0.005
+            reward = -0.05 
+
+        # bonus for closing a positive trade                
         if self.close_profit > 50:
-            reward = self.close_profit + 20
-            self.close_profit = 0           
+            reward = self.close_profit + 20 + self.last_trade_length / 20
+            self.close_profit = 0          
         elif self.close_profit > 30:
-            reward = self.close_profit + 10
+            reward = self.close_profit + 10 + self.last_trade_length / 20
             self.close_profit = 0
         elif self.close_profit > 10:
-            reward = self.close_profit + 5
+            reward = self.close_profit + 5 + self.last_trade_length / 20
             self.close_profit = 0
 
         if self.close_profit < 0:
