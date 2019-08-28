@@ -176,18 +176,18 @@ class Forex1(gym.Env):
         info = [float(self.account_balance), self.profitable_buy, self.notprofitable_buy, self.profitable_sell, self.notprofitable_sell]
 
         # bonus positiv for having an active trade and for having a profitable trade
-        if self.active_trade != 0 and self.trade_length > 10:
-            reward = self.trade_length / 100
+        #if self.active_trade != 0 and self.trade_length > 10:
+        #    reward = self.trade_length / 50
         
         # bonus depending on wether the trade is positive or negative  
-        if self.profit > 0:
+        if self.profit > 10 and self.trade_length > 10:
             reward = reward + self.profit / 10
         if self.profit < -5:
             reward = reward + self.profit / 20
 
         # bonus negativ for not having an active trade
-        if self.active_trade == 0 and self.close_profit == 0:
-            reward = -0.05 
+        #if self.active_trade == 0 and self.close_profit == 0:
+        #    reward = -0.05 
 
         # bonus for closing a positive trade                
         if self.close_profit > 50:
