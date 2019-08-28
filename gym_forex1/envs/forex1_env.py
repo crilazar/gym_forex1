@@ -180,10 +180,10 @@ class Forex1(gym.Env):
         #    reward = self.trade_length / 50
         
         # bonus depending on wether the trade is positive or negative  
-        if self.profit > 10 and self.trade_length > 10:
-            reward = reward + self.profit / 10
-        if self.profit < -15:
-            reward = reward + self.profit / 20
+        #if self.profit > 10 and self.trade_length > 10:
+        #    reward = reward + self.profit / 10
+        #if self.profit < -15:
+        #    reward = reward + self.profit / 20
 
         # bonus negativ for not having an active trade
         #if self.active_trade == 0 and self.close_profit == 0:
@@ -204,10 +204,10 @@ class Forex1(gym.Env):
             self.close_profit = 0
 
         if self.close_profit < 0:
-            reward = self.close_profit - 5
+            reward = 2 * self.close_profit
             self.close_profit = 0
 
-        if self.close_profit >0:
+        if self.close_profit > 0:
             if self.last_trade_length < 10:
                 reward = self.close_profit - self.last_trade_length/2
             if self.last_trade_length > 10:
