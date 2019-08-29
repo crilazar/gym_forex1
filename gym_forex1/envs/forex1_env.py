@@ -179,7 +179,7 @@ class Forex1(gym.Env):
 
         # bonus positiv for having a positive trade and being in the trade longer
         if self.profit > 0 and self.trade_length > 10:
-            reward = self.trade_length / 200
+            reward = self.trade_length / 500
         
         # bonus depending on wether the trade is positive or negative  
         #if self.profit > 10 and self.trade_length > 10:
