@@ -37,7 +37,7 @@ class Forex1(gym.Env):
         self.action_space = spaces.Discrete(4)
 
         # Prices contains the OHCL values for the last five prices
-        self.observation_space = spaces.Box(low=0, high=1, shape=(40, ), dtype=np.float32)
+        self.observation_space = spaces.Box(low=0, high=1, shape=(41, ), dtype=np.float32)
 
     def _get_current_step_data(self):
         # Get the stock data points for the last 5 days and scale to between 0-1
@@ -45,6 +45,7 @@ class Forex1(gym.Env):
         self.CurrentMarketLevel = data_current_step[30]
         output_data = np.append(data_current_step, [[
                     self.active_trade,
+                    self.trade_length,
                     float(self.profit)
                 ]])
         obs = self._normalize_data(output_data)
@@ -92,7 +93,8 @@ class Forex1(gym.Env):
         norm_data[36] = (norm_data[36] + 20) / 40                    # EMA_red_H1_slope
         norm_data[37] = norm_data[37] / 500                    # Market_to_EMA_blue_H1
         norm_data[38] = norm_data[38] / 2                    # active_trade
-        norm_data[39] = (norm_data[39] + 1000) / 2000                    # profit
+        norm_data[39] = norm_data[39] / 1000                    # trade length        
+        norm_data[40] = (norm_data[40] + 1000) / 2000                    # profit
 
         return norm_data
 
@@ -173,11 +175,11 @@ class Forex1(gym.Env):
         
         obs = self._get_current_step_data()
         
-        info = [float(self.account_balance), self.profitable_buy, self.notprofitable_buy, self.profitable_sell, self.notprofitable_sell]
+        info = [float(self.account_balance), self.profitable_buy, self.notprofitable_buy, self.profitable_sell, self.notprofitable_sell, self.trade_length, self.last_trade_length]
 
-        # bonus positiv for having an active trade and for having a profitable trade
-        #if self.active_trade != 0 and self.trade_length > 10:
-        #    reward = self.trade_length / 50
+        # bonus positiv for having a positive trade and being in the trade longer
+        if self.profit > 0 and self.trade_length > 10:
+            reward = self.trade_length / 200
         
         # bonus depending on wether the trade is positive or negative  
         #if self.profit > 10 and self.trade_length > 10:
