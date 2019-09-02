@@ -191,27 +191,26 @@ class Forex1(gym.Env):
 
         # bonus for closing a positive trade
         if self.close_profit > 100:
-            reward = self.close_profit + 20 + self.last_trade_length / 20
+            reward = self.close_profit + self.last_trade_length / 10
             self.close_profit = 0                        
         elif self.close_profit > 60:
-            reward = self.close_profit + 15 + self.last_trade_length / 20
+            reward = self.close_profit + self.last_trade_length / 10
             self.close_profit = 0          
         elif self.close_profit > 30:
-            reward = self.close_profit + 10 + self.last_trade_length / 20
+            reward = self.close_profit + self.last_trade_length / 10
             self.close_profit = 0
         elif self.close_profit > 10:
-            reward = self.close_profit + 5 + self.last_trade_length / 20
+            reward = self.close_profit + self.last_trade_length / 10
             self.close_profit = 0
-
-        if self.close_profit < 0:
-            reward = 2 * self.close_profit
-            self.close_profit = 0
-
-        if self.close_profit > 0:
+        elif self.close_profit > 0:
             if self.last_trade_length < 10:
                 reward = self.close_profit - self.last_trade_length/2
             if self.last_trade_length > 10:
                 reward = self.close_profit
+            self.close_profit = 0
+
+        if self.close_profit < 0:
+            reward = 2 * self.close_profit - 5
             self.close_profit = 0
 
         return obs, reward, done, info
