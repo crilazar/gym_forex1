@@ -131,7 +131,6 @@ class Forex1(gym.Env):
                 self._close_trade()
             self.active_trade = 1
             self.trade_length = 0
-            self.last_trade_length = 0
             self.trade_open_price = self.CurrentMarketLevel
             self.before_trade_acount_balance = self.account_balance
             self.profit = 0
@@ -141,7 +140,6 @@ class Forex1(gym.Env):
                 self._close_trade()
             self.active_trade = 2
             self.trade_length = 0
-            self.last_trade_length = 0
             self.trade_open_price = self.CurrentMarketLevel
             self.before_trade_acount_balance = self.account_balance
             self.profit = 0
@@ -226,6 +224,10 @@ class Forex1(gym.Env):
         self.active_trade = 0
         self.close_profit = 0
         self.reward = 0
+        self.profitable_buy = 0
+        self.notprofitable_buy = 0
+        self.profitable_sell = 0
+        self.notprofitable_sell = 0
 
         # Set the current step to a random point within the data frame
         self.current_step = 0
