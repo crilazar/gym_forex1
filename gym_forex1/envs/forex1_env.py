@@ -211,7 +211,7 @@ class Forex1(gym.Env):
             self.close_profit = 0
 
         if self.close_profit < 0:
-            reward = 2 * self.close_profit
+            reward = 2 * self.close_profit - 5
             self.close_profit = 0
 
         return obs, reward, done, info
