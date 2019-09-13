@@ -175,6 +175,9 @@ class Forex1(gym.Env):
         
         obs = self._get_current_step_data()
 
+        if self.profit > 3:
+            reward = self.last_trade_length / 50
+
         if self.close_profit > 5:
             self.pips_won += self.close_profit
         elif self.close_profit < 0:
