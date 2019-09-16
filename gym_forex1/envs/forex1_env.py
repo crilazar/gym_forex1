@@ -175,9 +175,6 @@ class Forex1(gym.Env):
         
         obs = self._get_current_step_data()
 
-        if self.profit > 3:
-            reward = self.last_trade_length / 50
-
         if self.close_profit > 5:
             self.pips_won += self.close_profit
         elif self.close_profit < 0:
@@ -185,26 +182,30 @@ class Forex1(gym.Env):
 
         info = [float(self.account_balance), self.profitable_buy, self.notprofitable_buy, self.profitable_sell,\
             self.notprofitable_sell, self.trade_length, self.last_trade_length, self.pips_won, self.pips_lost]
-        
+
+        # bonus for positive trade and trade length > 10
+        if self.profit > 0 and self.trade_length > 10:
+            reward = self.trade_length / 500
+
         # bonus for closing a positive trade
         if self.close_profit > 150:
-            reward = self.close_profit + self.last_trade_length / 50
+            reward = self.close_profit + self.last_trade_length / 50 + 15
             self.close_profit = 0
         if self.close_profit > 100:
-            reward = self.close_profit + self.last_trade_length / 50
+            reward = self.close_profit + self.last_trade_length / 50 + 10
             self.close_profit = 0                        
         elif self.close_profit > 60:
-            reward = self.close_profit + self.last_trade_length / 50
+            reward = self.close_profit + self.last_trade_length / 50 + 6
             self.close_profit = 0          
         elif self.close_profit > 40:
-            reward = self.close_profit + self.last_trade_length / 50
+            reward = self.close_profit + self.last_trade_length / 50 + 4
             self.close_profit = 0
         elif self.close_profit > 20:
-            reward = self.close_profit + self.last_trade_length / 50
+            reward = self.close_profit + self.last_trade_length / 50 + 2
             self.close_profit = 0
         elif self.close_profit > 5:
             if self.last_trade_length > 10:
-                reward = self.close_profit + self.last_trade_length / 50
+                reward = self.close_profit
             else:
                 reward = self.close_profit / 2
             self.close_profit = 0
